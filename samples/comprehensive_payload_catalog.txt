@@ -1,0 +1,510 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    PAYLOAD LAB EDUCATIONAL REPORT                            ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+⚠️  ETHICS & SAFETY DISCLAIMER
+--------------------------------------------------------------------------------
+This report contains educational security payload templates designed for:
+  • Authorized security testing in controlled environments
+  • Educational purposes in cybersecurity training
+  • Understanding defensive security controls
+
+These templates MUST NOT be used for:
+  ✗ Unauthorized penetration testing
+  ✗ Malicious attacks or exploitation
+  ✗ Any activity without explicit written authorization
+
+Report Generated: 2026-02-14 23:20:03
+
+
+📊 PAYLOAD STATISTICS
+--------------------------------------------------------------------------------
+Total Payloads: 77
+
+Breakdown by Category:
+  • XSS: 23 templates
+  • SQLI: 30 templates
+  • CMDI: 24 templates
+
+
+📚 DETAILED PAYLOAD TEMPLATES
+================================================================================
+
+
+▼ CMDI PAYLOADS
+────────────────────────────────────────────────────────────────────────────────
+
+cmdi-001
+  Template: ; whoami
+  Purpose: Semicolon command separator - executes whoami after original command (Linux/Unix)
+  🛡️  Defense: Input validation: whitelist allowed characters. Never pass user input directly to system(), exec(), shell_exec(). Use argument arrays, not shell strings.
+
+
+cmdi-002
+  Template: | whoami
+  Purpose: Pipe operator - passes output of first command to whoami (usually shows username)
+  🛡️  Defense: Avoid shell execution entirely. Use language-native APIs (subprocess with shell=False in Python, child_process.execFile in Node).
+
+
+cmdi-003
+  Template: || whoami
+  Purpose: OR operator - executes whoami if first command fails
+  🛡️  Defense: Principle of least privilege: run application with minimal OS permissions. Disable shell access if possible.
+
+
+cmdi-004
+  Template: & whoami
+  Purpose: Background execution - runs whoami in background (Linux/Unix)
+  🛡️  Defense: Use parameterized command execution. In PHP: escapeshellarg() + escapeshellcmd() as last resort, better to avoid shell.
+
+
+cmdi-005
+  Template: && whoami
+  Purpose: AND operator - executes whoami only if first command succeeds
+  🛡️  Defense: Strict input validation: whitelist known-good inputs. Monitor process execution for anomalies.
+
+
+cmdi-006
+  Template: & whoami
+  Purpose: Windows command separator using ampersand
+  🛡️  Defense: On Windows: use subprocess without shell=True. Avoid cmd.exe entirely. Use Windows API directly when possible.
+
+
+cmdi-007
+  Template: | whoami
+  Purpose: Windows pipe operator - works in cmd.exe and PowerShell
+  🛡️  Defense: In .NET: use Process.Start() with argument lists, never with shell command strings.
+
+
+cmdi-008
+  Template: 
+ whoami
+  Purpose: Newline separator - executes as separate command in some contexts
+  🛡️  Defense: Normalize and validate input. Remove/escape control characters including newlines and carriage returns.
+
+
+cmdi-101
+  Template: `whoami`
+  Purpose: Backtick command substitution - output of whoami replaces the expression (Linux/Unix)
+  🛡️  Defense: Never use shell metacharacters in commands. Whitelist approach: define allowed values, reject everything else.
+
+
+cmdi-102
+  Template: $(whoami)
+  Purpose: Dollar-parenthesis command substitution - modern syntax in bash/sh
+  🛡️  Defense: Use application-level functions instead of OS commands when possible. For file operations: use language file APIs, not cat/ls/dir.
+
+
+cmdi-103
+  Template: %USERPROFILE%
+  Purpose: Windows environment variable expansion - can leak sensitive paths
+  🛡️  Defense: Disable or sanitize environment variable expansion. In cmd.exe, use setlocal to limit variable scope.
+
+
+cmdi-104
+  Template: ${IFS}
+  Purpose: Internal Field Separator variable - used to bypass space filtering in bash
+  🛡️  Defense: Blacklist filtering is insufficient. Use structured command execution (execve with argv array).
+
+
+cmdi-201
+  Template: > /tmp/output.txt
+  Purpose: Output redirection - writes command output to file (potential for file creation/overwrite)
+  🛡️  Defense: File system permissions: ensure web user cannot write to sensitive directories. Monitor for unexpected file creation.
+
+
+cmdi-202
+  Template: < /etc/passwd
+  Purpose: Input redirection - reads from file and uses as command input (potential information disclosure)
+  🛡️  Defense: Restrict read access to sensitive files. Use SELinux/AppArmor to enforce mandatory access control.
+
+
+cmdi-203
+  Template: 2>&1
+  Purpose: Error redirection - combines stderr with stdout (can reveal error messages with sensitive info)
+  🛡️  Defense: Don't display raw command output/errors to users. Log securely, show generic error messages to users.
+
+
+cmdi-204
+  Template: > C:\output.txt
+  Purpose: Windows output redirection to file
+  🛡️  Defense: On Windows: NTFS permissions to restrict file operations. Use User Account Control (UAC) properly.
+
+
+cmdi-301
+  Template: wh''oami
+  Purpose: Empty string injection - bypasses simple string matching for 'whoami'
+  🛡️  Defense: Don't rely on blacklisting commands. Whitelist allowed inputs or avoid shell execution entirely.
+
+
+cmdi-302
+  Template: who$@ami
+  Purpose: Special variable insertion ($@ = empty in many contexts) to obfuscate command
+  🛡️  Defense: Complex bypass attempts indicate attack. Use allowlist validation + logging of rejected inputs.
+
+
+cmdi-303
+  Template: w\ho\am\i
+  Purpose: Backslash escaping - can bypass pattern matching in some shells
+  🛡️  Defense: Normalize input before validation. Remove escape sequences or reject inputs containing them.
+
+
+cmdi-304
+  Template: /usr/bin/who``ami
+  Purpose: Full path + empty backticks - bypasses command name filters
+  🛡️  Defense: Whitelist acceptable values, don't blacklist commands. Better: don't use shell at all.
+
+
+cmdi-305
+  Template: ;{cat,/etc/passwd}
+  Purpose: Brace expansion in bash - {cat,/etc/passwd} expands to 'cat /etc/passwd'
+  🛡️  Defense: Use bash with --norc --noprofile options if shell is unavoidable. Better: use execve() directly.
+
+
+cmdi-306
+  Template: who^ami
+  Purpose: Windows caret escape character - 'who^ami' becomes 'whoami' in cmd.exe
+  🛡️  Defense: On Windows: avoid cmd.exe. Use ProcessStartInfo with UseShellExecute=false in .NET.
+
+
+cmdi-307
+  Template: ;ca\t${IFS}/etc/passwd
+  Purpose: Combined obfuscation: backslash escape + IFS variable for space
+  🛡️  Defense: Multiple obfuscation layers indicate sophisticated attack. Defense: no shell execution + strict validation.
+
+
+cmdi-308
+  Template: %0a whoami
+  Purpose: URL-encoded newline separator - may execute as separate command after decoding
+  🛡️  Defense: Decode user input, then validate. Check for encoded metacharacters. Reject, don't try to sanitize.
+
+
+
+▼ SQLI PAYLOADS
+────────────────────────────────────────────────────────────────────────────────
+
+sqli-001
+  Template: ' OR '1'='1
+  Purpose: Classic SQL injection - creates always-true condition to bypass WHERE clause
+  🛡️  Defense: Parameterized queries (prepared statements) prevent this entirely. Never concatenate user input into SQL.
+
+
+sqli-002
+  Template: ' OR 1=1--
+  Purpose: Boolean-based injection with comment - comments out rest of query
+  🛡️  Defense: Prepared statements are the primary defense. Input validation as secondary layer.
+
+
+sqli-003
+  Template: ' OR '1'='1' #
+  Purpose: MySQL-specific comment syntax using # to terminate query
+  🛡️  Defense: Use mysqli::prepare() or PDO with prepared statements. Never use mysql_query() with user input.
+
+
+sqli-004
+  Template: ' OR 1=1;--
+  Purpose: MSSQL semicolon query terminator with comment
+  🛡️  Defense: Use SqlCommand with parameters in .NET. Avoid dynamic SQL construction.
+
+
+sqli-005
+  Template: ' OR '1'='1' --
+  Purpose: PostgreSQL double-dash comment (note space after --)
+  🛡️  Defense: Use $1, $2 parameterization in PostgreSQL. Library: pg with parameterized queries.
+
+
+sqli-006
+  Template: ' AND extractvalue(1,concat(0x7e,database())) --
+  Purpose: MySQL error-based data extraction using extractvalue() function
+  🛡️  Defense: Prepared statements prevent injection. Additionally, principle of least privilege limits database access.
+
+
+sqli-101
+  Template: ' UNION SELECT NULL,NULL,NULL--
+  Purpose: UNION injection to discover column count - each NULL represents a column
+  🛡️  Defense: Prepared statements block this. If dynamic SQL is unavoidable, strict whitelist validation is needed.
+
+
+sqli-102
+  Template: ' UNION SELECT 1,database(),user()--
+  Purpose: MySQL UNION to extract database name and current user
+  🛡️  Defense: Defense-in-depth: prepared statements + least privilege database user + WAF monitoring.
+
+
+sqli-103
+  Template: ' UNION SELECT NULL,current_database(),current_user--
+  Purpose: PostgreSQL UNION for information disclosure
+  🛡️  Defense: Use parameterized queries exclusively. Avoid INFORMATION_SCHEMA access for app user.
+
+
+sqli-104
+  Template: ' UNION SELECT NULL,@@version,NULL--
+  Purpose: MSSQL version disclosure via UNION
+  🛡️  Defense: Parameterized queries in SqlCommand. Restrict database permissions for application account.
+
+
+sqli-105
+  Template: ' UNION SELECT 1,table_name,3 FROM information_schema.tables--
+  Purpose: UNION-based table name enumeration from information_schema
+  🛡️  Defense: Prepared statements + restrict information_schema access + monitor for enumeration attempts.
+
+
+sqli-201
+  Template: ' AND 1=1--
+  Purpose: Blind boolean SQLi - true condition (page behaves normally)
+  🛡️  Defense: Blind SQLi is harder to detect but still prevented by prepared statements. Monitor for repeated similar requests.
+
+
+sqli-202
+  Template: ' AND 1=2--
+  Purpose: Blind boolean SQLi - false condition (page behaves differently)
+  🛡️  Defense: Rate limiting and anomaly detection can identify blind SQLi attempts. Primary defense: prepared statements.
+
+
+sqli-203
+  Template: ' AND SUBSTRING(database(),1,1)='a'--
+  Purpose: Blind SQLi character extraction - tests if first character of database name is 'a'
+  🛡️  Defense: This demonstrates data exfiltration byte-by-byte. Prepared statements prevent the injection point.
+
+
+sqli-204
+  Template: ' AND ASCII(SUBSTRING(database(),1,1))>97--
+  Purpose: Blind binary search SQLi - compares ASCII value to narrow down characters
+  🛡️  Defense: Monitoring for sequential boolean testing patterns can detect blind SQLi automation. Prevent with parameterization.
+
+
+sqli-301
+  Template: ' AND SLEEP(5)--
+  Purpose: MySQL time delay - causes 5-second delay if injection succeeds (DESCRIPTION ONLY - DO NOT EXECUTE)
+  🛡️  Defense: Time-based attacks are stealthy but detectable via response time monitoring. Prevent with prepared statements.
+
+
+sqli-302
+  Template: '; SELECT pg_sleep(5)--
+  Purpose: PostgreSQL time delay using pg_sleep() (DESCRIPTION ONLY)
+  🛡️  Defense: Database activity monitoring can detect unusual sleep operations. Core defense: parameterized queries.
+
+
+sqli-303
+  Template: '; WAITFOR DELAY '00:00:05'--
+  Purpose: MSSQL time delay using WAITFOR (DESCRIPTION ONLY)
+  🛡️  Defense: WAITFOR commands are suspicious in web contexts. Monitor for these + use prepared statements.
+
+
+sqli-304
+  Template: ' AND IF(1=1,SLEEP(5),0)--
+  Purpose: Conditional time delay - sleeps only if condition is true (DESCRIPTION ONLY)
+  🛡️  Defense: Demonstrates data exfiltration via timing. Defense: prepared statements + query timeout limits.
+
+
+sqli-401
+  Template: admin'--
+  Purpose: Classic admin authentication bypass - comments out password check
+  🛡️  Defense: Prepared statements prevent this. Additionally: proper password hashing, account lockout, MFA.
+
+
+sqli-402
+  Template: ' OR '1'='1'--
+  Purpose: Always-true condition to bypass login - returns first user (often admin)
+  🛡️  Defense: Never build authentication queries with string concatenation. Use ORM or prepared statements.
+
+
+sqli-403
+  Template: admin' #
+  Purpose: MySQL comment-based auth bypass
+  🛡️  Defense: Defense layers: prepared statements, rate limiting, CAPTCHA after failed attempts, logging.
+
+
+sqli-404
+  Template: ' OR 1=1 LIMIT 1--
+  Purpose: LIMIT clause to ensure single result in auth bypass
+  🛡️  Defense: Prepared statements + secure session management + monitoring for suspicious logins.
+
+
+sqli-501
+  Template: ' OR '1'='1
+  Purpose: No comment needed if query structure allows - demonstrates basic filter evasion
+  🛡️  Defense: Blacklist filters are ineffective. Whitelist validation + prepared statements required.
+
+
+sqli-502
+  Template: ' /*!50000OR*/ '1'='1
+  Purpose: MySQL conditional comment bypass - code inside executes only on MySQL 5.0+
+  🛡️  Defense: Demonstrates why blacklisting fails. Use prepared statements, not regex filters.
+
+
+sqli-503
+  Template: ' OR/**/1=1--
+  Purpose: Comment-based space replacement - bypasses filters looking for ' OR ' with spaces
+  🛡️  Defense: Attackers use many obfuscation tricks. Don't rely on pattern matching for SQL injection defense.
+
+
+sqli-504
+  Template: ' OORR '1'='1
+  Purpose: Demonstrates recursive filter bypass logic - if filter removes OR, this becomes ' OR '1'='1
+  🛡️  Defense: Recursive sanitization or proper prepared statements needed. String replacement is insufficient.
+
+
+sqli-505
+  Template: ' UnIoN SeLeCt 1,2,3--
+  Purpose: Case variation to bypass case-sensitive filters
+  🛡️  Defense: Filters should be case-insensitive. Better: use prepared statements, not filters.
+
+
+sqli-506
+  Template: ' OR 0x31=0x31--
+  Purpose: Hex encoding of values (0x31 = '1') to evade simple pattern matching
+  🛡️  Defense: Modern WAFs normalize hex encoding. Core defense remains prepared statements.
+
+
+sqli-507
+  Template: ' OR CHAR(49)=CHAR(49)--
+  Purpose: Character code encoding to hide suspicious values
+  🛡️  Defense: Demonstrates why signatures fail. Prepared statements treat entire input as data, not code.
+
+
+
+▼ XSS PAYLOADS
+────────────────────────────────────────────────────────────────────────────────
+
+xss-001
+  Template: <script>alert('XSS')</script>
+  Purpose: Basic script tag injection - most common XSS pattern when user input is reflected in HTML body
+  🛡️  Defense: Modern browsers and CSP policies block inline scripts. WAFs detect <script> tags easily.
+
+
+xss-002
+  Template: <img src=x onerror=alert('XSS')>
+  Purpose: Event handler injection via img tag - triggers when image fails to load
+  🛡️  Defense: Content Security Policy (CSP) with 'unsafe-inline' disabled prevents this. Input sanitization removes event handlers.
+
+
+xss-003
+  Template: <svg onload=alert('XSS')>
+  Purpose: SVG-based XSS using onload event - alternative to img tag
+  🛡️  Defense: Modern WAFs recognize SVG event handlers. Proper HTML sanitization libraries (DOMPurify) remove these.
+
+
+xss-004
+  Template: <body onload=alert('XSS')>
+  Purpose: Body tag with onload event - executes when page loads
+  🛡️  Defense: Rarely works as it requires injecting into or replacing body tag. Sanitization prevents this.
+
+
+xss-005
+  Template: <iframe src=javascript:alert('XSS')>
+  Purpose: JavaScript protocol in iframe src - executes JS in iframe context
+  🛡️  Defense: CSP frame-src directive blocks this. Modern browsers restrict javascript: protocol.
+
+
+xss-101
+  Template: " onmouseover="alert('XSS')"
+  Purpose: Breaking out of attribute value to inject event handler - common when input is in href, src, or value attributes
+  🛡️  Defense: Attribute encoding and strict attribute validation prevent this. Never insert user data into attributes without encoding.
+
+
+xss-102
+  Template: ' onclick='alert("XSS") '
+  Purpose: Single quote breakout for attribute injection - works when developer uses single quotes
+  🛡️  Defense: Context-aware output encoding handles both single and double quotes. Modern frameworks auto-escape.
+
+
+xss-103
+  Template: javascript:alert('XSS')
+  Purpose: JavaScript protocol in href attribute - executes when link is clicked
+  🛡️  Defense: URL validation should whitelist http/https only. Frameworks like React prevent javascript: URLs by default.
+
+
+xss-104
+  Template: data:text/html,<script>alert('XSS')</script>
+  Purpose: Data URI with HTML content - can execute scripts in some contexts
+  🛡️  Defense: CSP and proper URL validation block data: URIs. Always validate URL schemes.
+
+
+xss-201
+  Template: '; alert('XSS'); //
+  Purpose: Breaking out of JavaScript string literal - common when user input is placed in JS variable
+  🛡️  Defense: Never put user input directly in <script> tags. Use JSON encoding and proper escaping. Consider using data attributes instead.
+
+
+xss-202
+  Template: "; alert('XSS'); //
+  Purpose: Double quote string breakout in JavaScript context
+  🛡️  Defense: Use JSON.stringify() for any dynamic data in JS. Avoid inline scripts entirely with CSP.
+
+
+xss-203
+  Template: </script><script>alert('XSS')</script>
+  Purpose: Script tag breakout - closes existing script and opens new one
+  🛡️  Defense: HTML encoding even inside script tags. Better: avoid putting user data in scripts entirely.
+
+
+xss-301
+  Template: #<img src=x onerror=alert('XSS')>
+  Purpose: DOM XSS via URL fragment - exploits unsafe use of location.hash in JavaScript
+  🛡️  Defense: Sanitize all data from location.hash, location.search before inserting into DOM. Use textContent instead of innerHTML.
+
+
+xss-302
+  Template: javascript:alert('XSS')
+  Purpose: DOM XSS via javascript: protocol in dynamically created links
+  🛡️  Defense: Validate URLs before setting href. Use URL API to parse and validate schemes.
+
+
+xss-303
+  Template: <img src=1 onerror=alert(document.domain)>
+  Purpose: DOM XSS demonstrating document access - shows execution context
+  🛡️  Defense: DOMPurify or similar libraries sanitize HTML before insertion. Avoid eval() and innerHTML with user data.
+
+
+xss-401
+  Template: <script>alert('Stored XSS')</script>
+  Purpose: Basic stored XSS - persisted in database and executed for all users viewing the content
+  🛡️  Defense: Server-side input validation + output encoding. Store data safely, encode on output. Use CSP as defense-in-depth.
+
+
+xss-402
+  Template: <img src=x onerror=alert('Persistent')>
+  Purpose: Stored XSS via image tag - persists in comments, profiles, messages
+  🛡️  Defense: Sanitize all user-generated content before storage and on output. Use allowlist of safe HTML tags if rich text is needed.
+
+
+xss-403
+  Template: <svg/onload=alert('XSS')>
+  Purpose: Stored SVG XSS - compact syntax that may bypass length restrictions
+  🛡️  Defense: Implement strict CSP. Sanitize with libraries that understand modern HTML5 tags. Limit input length.
+
+
+xss-501
+  Template: <ScRiPt>alert('XSS')</ScRiPt>
+  Purpose: Case variation attempt - tries to bypass case-sensitive filters
+  🛡️  Defense: Proper filters are case-insensitive. Defense should normalize input case before checking.
+
+
+xss-502
+  Template: <script>alert(String.fromCharCode(88,83,83))</script>
+  Purpose: Character code encoding - attempts to hide 'XSS' string from pattern matching
+  🛡️  Defense: Modern WAFs execute/sandbox JavaScript to detect encoded payloads. Tag structure is still detected.
+
+
+xss-503
+  Template: <img src=x oneonerrorrror=alert('XSS')>
+  Purpose: Demonstrates double-encoding/recursive filter bypass logic - if filter removes 'onerror', this becomes 'onerror'
+  🛡️  Defense: Recursive sanitization or proper HTML parser prevents this. Don't use simple string replacement for sanitization.
+
+
+xss-504
+  Template: <svg><script>alert('XSS')</script></svg>
+  Purpose: Nested context - SVG can contain script tags in some parsers
+  🛡️  Defense: Context-aware HTML parsers handle nested tags. Use DOMPurify or similar libraries.
+
+
+xss-505
+  Template: &#60;script&#62;alert('XSS')&#60;/script&#62;
+  Purpose: HTML entity encoding of tags - may be decoded by browser in some contexts
+  🛡️  Defense: Context-aware encoding prevents this. Encode for the specific output context (HTML, attribute, JS, URL).
+
+
+================================================================================
+End of Report - Use Responsibly and Ethically
+================================================================================

