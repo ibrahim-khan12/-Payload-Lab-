@@ -10,20 +10,20 @@ A modular, educational payload template generation framework demonstrating how a
 
 ---
 
-## ⚠️ ETHICS & SAFETY DISCLAIMER
+##  ETHICS & SAFETY DISCLAIMER
 
 **EDUCATIONAL USE ONLY - AUTHORIZED ENVIRONMENTS ONLY**
 
 This tool generates payload **templates** for educational purposes. It is designed for:
 
-✅ **Authorized Use:**
+ **Authorized Use:**
 - Security training and education
 - Authorized penetration testing with **written permission**
 - Understanding defensive security controls
 - Security research in controlled environments
 - OWASP-aligned ethical security practices
 
-❌ **Prohibited Use:**
+ **Prohibited Use:**
 - Unauthorized security testing or exploitation
 - Malicious attacks on systems without permission
 - Any illegal or unethical activity
