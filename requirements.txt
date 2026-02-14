@@ -1,0 +1,6 @@
+# Payload Lab - Educational Payload Framework
+# No external dependencies required for core functionality
+# All modules use Python standard library only
+
+# Optional: For enhanced functionality (not required)
+# dataclasses is built-in for Python 3.7+
